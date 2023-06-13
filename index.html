@@ -10,8 +10,12 @@
 </head>
 <body>
     <h1>ERC20 Token</h1>
-    <div id="tokenInfo"></div>
-    <br>
+
+    <h2>Token Details</h2>
+    <p>Name: <span id="tokenName"></span>, <span id="tokenSymbol"></span></p>
+    <p>Total Supply: <span id="totalSupply"></span></p>
+
+    <h2> Tranfer Tokens </h2>
     <div>
         <label for="to">To:</label>
         <input type="text" id="to" />
@@ -21,9 +25,9 @@
         <input type="number" id="value" />
     </div>
     <br>
-    <button id="transferBtn">Transfer Tokens</button>
+    <button id="transferBtn">Transfer</button>
     
-    <br><br>
+    <h2> Check Balance</h2>
     <div>
         <label for="to">Address:</label>
         <input type="text" id="add" />
@@ -34,6 +38,7 @@
    
     <h2> Transaction History </h2>
     <div id="eventLog"></div>
+
     <script>
         // web3 provider
         if (typeof window.ethereum !== 'undefined') {
@@ -187,10 +192,8 @@
         }
     ];
 
-        //contract object
         const contract = new web3.eth.Contract(contractABI, contractAddress);
 
-        //function to transfer tokens
         async function transferTokens(to, value) {
             try {
                 const accounts = await web3.eth.getAccounts();
@@ -203,7 +206,6 @@
             }
         }
 
-        //function to get balance
         async function getBalance(account) {
             try {
                 const balance = await contract.methods.balanceOf(account).call();
@@ -214,27 +216,15 @@
             }
         }
 
-        async function getTokenSymbol(){
-            try{
-                const symbol = await contract.methods.symbol().call();
-                console.log('Token Symbol: ',symbol);
-                return symbol;
-            } catch(error){
-                console.error("Error getting token symbol:",error);
-            }
-
+        async function displayTokenDetails() {
+            const name = await contract.methods.name().call();
+            const symbol = await contract.methods.symbol().call();
+            const totalSupply = await contract.methods.totalSupply().call();
+            document.getElementById('tokenName').textContent = name;
+            document.getElementById('tokenSymbol').textContent = symbol;
+            document.getElementById('totalSupply').textContent = totalSupply.toString();
         }
 
-        async function getTokenName(){
-            try{
-                const name = await contract.methods.name().call();
-                console.log('Token Name: ',name);
-                return name;
-            } catch(error){
-                console.error("Error getting token name:",error);
-            }
-        }
-        //function to listen for token transfer events
         function listenForTransferEvents() {
             contract.events.Transfer()
                 .on('data', function(event) {
@@ -247,7 +237,6 @@
                 });
         }
 
-        // function to display events in the "eventLog" div
         function displayEvent(eventMessage) {
             const eventLog = document.getElementById('eventLog');
             const eventElement = document.createElement('p');
@@ -255,9 +244,8 @@
             eventLog.appendChild(eventElement);
         }
 
-        //function call for events
         listenForTransferEvents();
-       
+        displayTokenDetails();
 
         //event listeners
         const transferBtn = document.getElementById('transferBtn');
@@ -266,7 +254,6 @@
         const toInput = document.getElementById('to');
         const valueInput = document.getElementById('value');
         const bal = document.getElementById('add');
-        const tokeninfo = document.getElementById('tokenInfo');
 
 
         transferBtn.addEventListener('click', async () => {
@@ -282,12 +269,7 @@
 
         });
 
-        //displaying token details on window start
-        window.addEventListener('load',async ()=>{
-            const name = await getTokenName();
-            const symbol = await getTokenSymbol();
-            tokeninfo.textContent = `Token Name: ${name}, Symbol: ${symbol}`;
-        })
+        
 
     </script>
 </body>
