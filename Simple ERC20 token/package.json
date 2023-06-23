@@ -1,0 +1,14 @@
+{
+  "name": "hardhat-project",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^1.0.2",
+    "chai": "^4.3.7",
+    "hardhat": "^2.15.0",
+    "mocha": "^10.2.0",
+    "ts-jest": "^29.1.0",
+    "ts-mocha": "^10.0.0"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.9.2"
+  }
+}
